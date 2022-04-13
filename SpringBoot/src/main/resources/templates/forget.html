@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/css/forget.css}">
+    <link rel="shortcut icon" th:href="@{/image/favicon.ico}" type="image/x-icon"/>
+    <meta http-equiv="content-type" content="text/html" charset="UTF-8">
+    <title>密码找回 | Xiang の Web</title>
+    <!--引入jQuery-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script type="text/javascript">
+        let qq_codeNum=null;
+        let qq_User=null
+        function send() {
+            let qq = $("input[name=qq]").val()
+            let qqPattern = /^[1-9][0-9]{4,10}$/
+
+            if (qq==null||qq==""){
+                alert("QQ不能为空")
+            }else if (!qqPattern.test(qq)) {
+                alert("请输入正确的QQ号")
+            }else {
+                $.ajax({
+                    url: "/mail",
+                    data: {"qq": qq},
+                    type:"post",
+                    success: function (data) {
+                        $(".yan").attr('disabled',true)
+                        console.log("用户『"+qq+"』的验证码发送成功！")
+                        console.log(data)
+                        qq_User=qq
+                    }
+                })
+            }
+        }
+        function submitForm() {
+            var pwd1=$("input[name=userPwd]").val()  // 密码1
+            var pwd2=$("input[name=userPwd2]").val()  // 密码2
+            var compare=$("input[name=compare]").val()  // 验证码
+            let qq = $("input[name=qq]").val()  // QQ号 or 更改密码的账号
+
+            if(pwd1!=pwd2){
+                alert("两次输入密码不一致")
+                return false;
+            }else if(qq!=qq_User){
+               alert("当前QQ与获取验证码QQ不一致")
+                return false;
+            }else{
+                $.ajax({
+                    url:"/compare",
+                    type: "post",
+                    data: {"qq":qq,"userPwd":pwd1,"compare":compare},
+                    success:function (data){
+                        console.log(data)
+                        return data
+                    }
+                })
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="data">
+    <span id="year"></span>
+    <br>
+    <span id="time"></span>
+</div>
+<div class="reminder" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}">
+    <span>错误</span>
+</div>
+<div class="box">
+    <h3>忘记密码</h3>
+    <form th:action="@{/ForgetPassword}" class="form-box" onsubmit="return submitForm()">
+        <div>
+            <div class="inout">
+                <input name="qq" required class="text" type="text" placeholder="QQ">
+                <input class="yan" type="button" onclick="send()" value="获取验证码">
+            </div>
+            <input name="compare" class="text" type="text" required  placeholder="验证码">
+            <input name="userPwd" class="text" type="password" required placeholder="修改密码">
+            <input name="userPwd2"class="text" type="password" required placeholder="确认密码">
+            <input class="submit" type="submit" value="确认修改">
+        </div>
+    </form>
+
+    <div class="fn">
+        <a href="login.html">去登录</a>
+    </div>
+</div>
+<div class="copyright">
+    <p>I Love My Yu&copy;2022 Xiang</p>
+</div>
+</body>
+</html>
+<script type="text/javascript" th:src="@{/js/forget.js}"></script>
