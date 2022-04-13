@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiang.mapper.UserMapper">
+    <select id="queryUserList" resultType="User" useCache="true">
+        select * from user
+    </select>
+
+    <select id="queryUserByQq" resultType="User" useCache="true">
+        select * from user where qq=#{qq}
+    </select>
+
+    <select id="querUserName" resultType="User" useCache="true">
+        select * from user where user_name=#{username}
+    </select>
+
+    <select id="queryUserById" resultType="User" useCache="true">
+        select * from user where user_name=#{username} and user_Pwd=#{pwd}
+    </select>
+
+    <select id="queryUserById2" resultType="User" useCache="true">
+        select * from user where qq=#{username} and user_Pwd=#{pwd}
+    </select>
+
+    <insert id="updatePwd" parameterType="User">
+        update user set user_Pwd = #{userPwd} where qq=#{qq}
+    </insert>
+
+
+    <insert id="addUser" parameterType="User">
+        insert into user values
+            (null,#{qq},#{userName},null,null,#{userPwd},null,null,"2020-12-12 12:00:00",null);
+    </insert>
+
+    <update id="updateUser" parameterType="User">
+        update user set name=#{name} ,pwd=#{pwd} where id = #{id}
+    </update>
+
+    <delete id="deteUser" parameterType="int">
+        delete from user where id = #{id}
+    </delete>
+</mapper>
